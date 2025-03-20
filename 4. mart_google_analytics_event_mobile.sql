@@ -40,7 +40,7 @@ WITH event_mobile AS (
     is_active_user,
     source_database,
     created_date
-  FROM `privydata`.`dwh_prod`.`fct_ga_event_mobile`
+  FROM `dwh_prod`.`fct_ga_event_mobile`
   WHERE
     1 = 1
     
