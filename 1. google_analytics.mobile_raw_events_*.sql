@@ -217,4 +217,4 @@ select
     publisher.ad_unit_id,
     run_date,
     export_id
-from privydata.google_analytics.mobile_raw_events_*
+from google_analytics.mobile_raw_events_*
