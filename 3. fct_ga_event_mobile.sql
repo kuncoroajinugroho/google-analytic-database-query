@@ -1,15 +1,15 @@
 
 
 WITH dim_user AS (
-  SELECT privyid
-  FROM `privydata`.`dwh_prod`.`dim_users`
+  SELECT id
+  FROM `dwh_prod`.`dim_users`
   WHERE verified_id = 1
   GROUP BY 1
 ),
 
 user_carstensz AS (
-  SELECT privyid
-  FROM `privydata`.`dwh_prod_carstensz_user_source`.`carstensz_user_users_source`
+  SELECT id
+  FROM `dwh_prod_carstensz_user_source`.`carstensz_user_users_source`
   GROUP BY 1
 ),
 
@@ -38,7 +38,7 @@ backup_data AS (
     ga_session_id,
     created_date,
     event_number
-  FROM `privydata`.`dwh_prod_google_analytics_source`.`ga_backup_mobile_raw_events_source`
+  FROM `dwh_prod_google_analytics_source`.`ga_backup_mobile_raw_events_source`
   WHERE event_number = 1
     
       AND
@@ -85,7 +85,7 @@ mobile AS (
     event_group_name,
     created_date,
     event_number
-  FROM `privydata`.`dwh_prod_google_analytics_source`.`ga_mobile_raw_events_source`
+  FROM `dwh_prod_google_analytics_source`.`ga_mobile_raw_events_source`
   WHERE
     1 = 1
     AND event_group_name IN ("item_click", "action", "screen_view", "event_name")
@@ -135,7 +135,7 @@ new_mobile AS (
     event_group_name,
     created_date,
     event_number
-  FROM `privydata`.`dwh_prod_google_analytics_source`.`ga_new_mobile_raw_events_source`
+  FROM `dwh_prod_google_analytics_source`.`ga_new_mobile_raw_events_source`
   WHERE
     1 = 1
     AND event_group_name IN ("item_click", "action", "screen_view", "event_name")
@@ -148,11 +148,11 @@ new_mobile AS (
     
 ),
 
-user_privyid AS (
-  SELECT privyid
+user_id AS (
+  SELECT id
   FROM dim_user
   UNION DISTINCT
-  SELECT privyid
+  SELECT id
   FROM user_carstensz
 ),
 
@@ -198,7 +198,7 @@ prep_backup AS (
     CAST("" AS STRING)                   AS traffic_source_medium,
     CAST("" AS STRING)                   AS traffic_source_source
   FROM backup_data
-  LEFT JOIN user_privyid ON backup_data.user_id = user_privyid.privyid
+  LEFT JOIN user_id ON backup_data.user_id = user_id.id
   LEFT JOIN event_mapper ON backup_data.metric = event_mapper.metric
 ),
 
@@ -244,7 +244,7 @@ prep_mobile AS (
     mobile.created_date                    AS created_date,
     event_mapper.event_name_mapper_id_sk   AS event_mapper_id
   FROM mobile
-  LEFT JOIN user_privyid ON mobile.user_id = user_privyid.privyid
+  LEFT JOIN user_id ON mobile.user_id = user_id.id
   LEFT JOIN event_mapper ON mobile.metric = event_mapper.metric
 ),
 
@@ -290,7 +290,7 @@ prep_new_mobile AS (
     new_mobile.created_date                    AS created_date,
     event_mapper.event_name_mapper_id_sk       AS event_mapper_id
   FROM new_mobile
-  LEFT JOIN user_privyid ON new_mobile.user_id = user_privyid.privyid
+  LEFT JOIN user_id ON new_mobile.user_id = user_id.id
   LEFT JOIN event_mapper ON new_mobile.metric = event_mapper.metric
 ),
 
