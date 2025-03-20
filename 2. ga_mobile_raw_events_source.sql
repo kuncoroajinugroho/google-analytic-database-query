@@ -4,7 +4,7 @@ WITH source AS (
   SELECT
     *,
     PARSE_DATE('%Y%m%d', `_TABLE_SUFFIX`) AS created_date
-  FROM `privydata`.`google_analytics`.`mobile_raw_events_*`
+  FROM `google_analytics`.`mobile_raw_events_*`
 ),
 
 renamed AS (
